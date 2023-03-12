@@ -6,7 +6,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+
 import static org.springframework.http.CacheControl.noCache;
+
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import static org.springframework.http.ResponseEntity.status;
@@ -41,9 +45,9 @@ public class FlightInfoResource {
      * @return flights for the day of the chosen date
      */
     @RequestMapping(method = RequestMethod.GET, path = "/{date}/results")
-    public CompletionStage<ResponseEntity<?>> getResults(@PathVariable("date") @NotEmpty String date) {
+    public CompletionStage<ResponseEntity<?>> getResults(@PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") @NotEmpty LocalDate date) {
 
-        return flightInfoService.findFlightByDate(LocalDate.now()).thenApply(maybeResults -> {
+        return flightInfoService.findFlightByDate(date).thenApply(maybeResults -> {
 
             // no results, no content
             if (maybeResults.isEmpty()) {
